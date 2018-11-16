@@ -1,0 +1,22 @@
+{
+    "name": "coExp/progressBar",
+    "type": "library",
+    "description": "Beautiful console progressBar",
+    "keywords": ["progressbar"],
+    "homepage": "https://github.com/coExp/progressBar",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "coExp",
+            "homepage": "https://github.com/coExp"
+        }
+    ],
+    "require": {
+        "php": ">=7"
+    },
+    "autoload": {
+        "psr-4": {
+            "coExp\\": "src"
+        }
+    }
+}
