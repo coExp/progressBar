@@ -1,6 +1,6 @@
 <?php
 
-namespace coExp;
+namespace coExp\ProgressBar;
 
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Output\OutputInterface;
