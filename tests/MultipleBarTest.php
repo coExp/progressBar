@@ -4,6 +4,7 @@ namespace coExp\ProgressBar\Tests;
 
 use coExp\ProgressBar\Exception\MultipleBarConfigurationException;
 use coExp\ProgressBar\MultipleBar;
+use DateTime;
 use \Symfony\Component\Console\Helper\ProgressBar as ProgressBar;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -21,6 +22,9 @@ class MultipleBarTest extends TestCase
         $this->output = new ConsoleOutput();
     }
 
+    /**
+     * @throws MultipleBarConfigurationException
+     */
     public function test_throw_exception()
     {
         $this->expectException(MultipleBarConfigurationException::class);
@@ -33,10 +37,13 @@ class MultipleBarTest extends TestCase
         $mb->erase();
     }
 
+    /**
+     * @throws MultipleBarConfigurationException
+     */
     public function test_one_line()
     {
         $mb = (new MultipleBar($this->output))
-            ->setTitle(__METHOD__.': '.(new \DateTime())->format(DATE_ATOM))
+            ->setTitle(__METHOD__.': '.(new DateTime())->format(DATE_ATOM))
             ->addProgressBar();
 
         $mb->getProgressBarByIndex(0)
@@ -54,15 +61,19 @@ class MultipleBarTest extends TestCase
         $mb->erase();
     }
 
-    public function test_two_line()
+    public function test_two_line_unknown_length()
     {
         $mb = (new MultipleBar($this->output))
-            ->setTitle(__METHOD__.': '.(new \DateTime())->format(DATE_ATOM))
+            ->setTitle(__METHOD__.': '.(new DateTime())->format(DATE_ATOM))
             ->addProgressBarByName(['Master']);
+
+        /** @see https://symfony.com/doc/current/components/console/helpers/progressbar.html#custom-formats */
+        ProgressBar::setFormatDefinition('custom', '%message%: %percent%% %current%/%max% |%bar%');
 
         $masterProgressBar = $mb->getProgressBarByName('Master');
         $masterProgressBar->setMaxSteps(4);
         $masterProgressBar->setMessage('Master');
+        $masterProgressBar->setFormat('custom');
 
         $this->assertInstanceOf(ProgressBar::class, $mb->getProgressBarByName('Master'));
         $this->assertNull($mb->getProgressBarByName('Child'));
@@ -77,6 +88,7 @@ class MultipleBarTest extends TestCase
             $childProgressBar = $mb->getProgressBarByName('Child');
             $childProgressBar->setMaxSteps($numberStuff);
             $childProgressBar->setMessage("Children #$i");
+            $childProgressBar->setFormat('custom');
 
             for ($j = 0; $j < $numberStuff; $j++) {
                 $mb->getProgressBarByName('Child')->advance();
@@ -87,6 +99,43 @@ class MultipleBarTest extends TestCase
             $mb->removeProgressBarByName('Child');
 
             $mb->getProgressBarByName('Master')->advance();
+        }
+
+        $mb->erase();
+    }
+
+    public function test_two_line_known_length()
+    {
+        $length = [23, 24, 25, 26]; // total = 98
+
+        $mb = (new MultipleBar($this->output))
+            ->setTitle(__METHOD__.': '.(new DateTime())->format(DATE_ATOM))
+            ->addProgressBarByName(['Master', 'Child']);
+
+        /** @see https://symfony.com/doc/current/components/console/helpers/progressbar.html#custom-formats */
+        ProgressBar::setFormatDefinition('custom', '%message%: %percent%% %current%/%max% |%bar%');
+
+        $masterProgressBar = $mb->getProgressBarByName('Master');
+        $masterProgressBar->setMaxSteps(98);
+        $masterProgressBar->setMessage('Master');
+        $masterProgressBar->setFormat('custom');
+
+        $this->assertInstanceOf(ProgressBar::class, $mb->getProgressBarByName('Master'));
+        $this->assertInstanceOf(ProgressBar::class, $mb->getProgressBarByName('Child'));
+
+        foreach ($length as $i => $numberStuff) {
+            $childProgressBar = $mb->getProgressBarByName('Child');
+            $childProgressBar->setProgress(0);
+            $childProgressBar->setMaxSteps($numberStuff);
+            $childProgressBar->setMessage("Children #$i");
+            $childProgressBar->setFormat('custom');
+
+            for ($j = 0; $j < $numberStuff; $j++) {
+                $mb->getProgressBarByName('Child')->advance();
+                $mb->getProgressBarByName('Master')->advance();
+                $mb->show();
+                usleep(100000);
+            }
         }
 
         $mb->erase();
