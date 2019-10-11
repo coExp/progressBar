@@ -61,6 +61,31 @@ class MultipleBarTest extends TestCase
         $mb->erase();
     }
 
+    /**
+     * @throws MultipleBarConfigurationException
+     */
+    public function test_one_line_on_stderror()
+    {
+        $mb = (new MultipleBar($this->output))
+            ->setStdError(true)
+            ->setTitle(__METHOD__.': '.(new DateTime())->format(DATE_ATOM))
+            ->addProgressBar();
+
+        $mb->getProgressBarByIndex(0)
+            ->setMaxSteps(20);
+
+        $this->assertInstanceOf(ProgressBar::class, $mb->getProgressBarByIndex(0));
+        $this->assertNull($mb->getProgressBarByIndex(1));
+
+        for ($i = 0 ; $i < 20 ; $i++) {
+            $mb->getProgressBarByIndex(0)->advance();
+            $mb->show();
+            usleep(100000);
+        }
+
+        $mb->erase();
+    }
+
     public function test_two_line_unknown_length()
     {
         $mb = (new MultipleBar($this->output))

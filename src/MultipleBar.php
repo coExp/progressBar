@@ -3,8 +3,10 @@
 namespace coExp\ProgressBar;
 
 use coExp\ProgressBar\Exception\MultipleBarConfigurationException;
+use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use \Symfony\Component\Console\Helper\ProgressBar as ProgressBar;
+use Symfony\Component\Console\Output\StreamOutput;
 
 class MultipleBar
 {
@@ -17,7 +19,13 @@ class MultipleBar
     protected $progressBars = [];
 
     /** @var OutputInterface */
-    protected $output;
+    protected $originalOutput;
+
+    /** @var StreamOutput */
+    protected $stdOutput;
+
+    /** @var bool */
+    protected $isStdError = false;
 
     private $length = 0;
 
@@ -33,8 +41,31 @@ class MultipleBar
      */
     public function __construct(OutputInterface $output)
     {
-        $this->output = $output;
+        // Force writing on StdOut
+        $this->stdOutput = new StreamOutput($output->getStream());
+
+        // By default, Symfony/Helper write on stdError
+        $this->originalOutput = $output;
         $this->time = time();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isStdError(): bool
+    {
+        return $this->isStdError;
+    }
+
+    /**
+     * @param bool $stdError
+     * @return MultipleBar
+     */
+    public function setStdError(bool $stdError): self
+    {
+        $this->isStdError = $stdError;
+
+        return $this;
     }
 
     /**
@@ -54,7 +85,7 @@ class MultipleBar
     public function erase()
     {
         for ($i = 0 ; $i < $this->length; $i++) {
-            $this->output->write(self::CLEAR_LINE.self::MOVE_CURSOR_UP);
+            $this->originalOutput->write(self::CLEAR_LINE.self::MOVE_CURSOR_UP);
         }
 
         $this->length = 0;
@@ -70,13 +101,13 @@ class MultipleBar
         $this->erase();
 
         if (false === empty($this->title)) {
-            $this->output->writeln(self::CLEAR_LINE.$this->title);
+            $this->originalOutput->writeln(self::CLEAR_LINE.$this->title);
             $this->length++;
         }
 
         foreach ($this->progressBars as $progressBar) {
             $progressBar->display();
-            $this->output->write("\n");
+            $this->originalOutput->write("\n");
             $this->length++;
         }
 
@@ -106,6 +137,18 @@ class MultipleBar
     }
 
     /**
+     * @return OutputInterface|StreamOutput
+     */
+    protected function getOutput()
+    {
+        if ($this->isStdError()) {
+            return $this->originalOutput;
+        }
+
+        return $this->stdOutput;
+    }
+
+    /**
      * @param int $number
      * @return MultipleBar
      * @throws MultipleBarConfigurationException
@@ -117,7 +160,7 @@ class MultipleBar
         }
 
         for ($i = 0 ; $i < $number ; $i++) {
-           $this->progressBars[] = new ProgressBar($this->output);
+           $this->progressBars[] = new ProgressBar($this->getOutput());
         }
 
         return $this;
@@ -130,7 +173,7 @@ class MultipleBar
     public function addProgressBarByName(array $names)
     {
         foreach ($names as $name) {
-           $this->progressBars[$name] = new ProgressBar($this->output);
+           $this->progressBars[$name] = new ProgressBar($this->getOutput());
         }
 
         return $this;

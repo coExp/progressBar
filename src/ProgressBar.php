@@ -3,6 +3,7 @@
 namespace coExp\ProgressBar;
 
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
+use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ProgressBar
@@ -46,6 +47,11 @@ class ProgressBar
     {
         $output->getFormatter()->setStyle('ok',  new OutputFormatterStyle('black', 'green', ['bold']));
         $output->getFormatter()->setStyle('err', new OutputFormatterStyle('red', 'black', ['bold']));
+
+        if ($output instanceof ConsoleOutputInterface) {
+            $output = $output->setErrorOutput($output);
+        }
+
         $this->output = $output;
         $this->time = time();
     }
