@@ -1,6 +1,6 @@
 <?php
 
-namespace coExp\wUnderBar;
+namespace coExp\WunderBar;
 
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;

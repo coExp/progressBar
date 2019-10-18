@@ -1,9 +1,8 @@
 <?php
 
-namespace coExp\wUnderBar;
+namespace coExp\WunderBar;
 
-use coExp\wUnderBar\Exception\MultipleBarConfigurationException;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
+use coExp\WunderBar\Exception\MultipleBarConfigurationException;
 use Symfony\Component\Console\Output\OutputInterface;
 use \Symfony\Component\Console\Helper\ProgressBar as ProgressBar;
 use Symfony\Component\Console\Output\StreamOutput;
