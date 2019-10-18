@@ -1,3 +1,8 @@
+<a id="status-image-popup" title="Latest push build on default branch: " name="status-images" class="pointer open-popup">
+    <img src="https://travis-ci.org/coExp/wUnderBar.svg?branch=master" alt="build:">
+</a>
+
+
 wUnderBar
 ====================
 
