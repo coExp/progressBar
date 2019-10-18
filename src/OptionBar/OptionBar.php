@@ -1,7 +1,7 @@
 <?php
 
 
-namespace coExp\OptionBar;
+namespace coExp\wUnderBar;
 
 
 class OptionBar

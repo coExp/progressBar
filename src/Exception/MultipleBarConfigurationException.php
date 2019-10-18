@@ -1,6 +1,6 @@
 <?php
 
-namespace coExp\ProgressBar\Exception;
+namespace coExp\wUnderBar\Exception;
 
 class MultipleBarConfigurationException extends \Exception
 {
