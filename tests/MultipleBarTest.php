@@ -1,9 +1,9 @@
 <?php
 
-namespace coExp\wUnderBar\Tests;
+namespace coExp\WunderBar\Tests;
 
-use coExp\wUnderBar\Exception\MultipleBarConfigurationException;
-use coExp\wUnderBar\MultipleBar;
+use coExp\WunderBar\Exception\MultipleBarConfigurationException;
+use coExp\WunderBar\MultipleBar;
 use DateTime;
 use \Symfony\Component\Console\Helper\ProgressBar as ProgressBar;
 use PHPUnit\Framework\TestCase;

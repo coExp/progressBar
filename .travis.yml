@@ -6,13 +6,8 @@ php:
 
 sudo: false
 
-install: travis_retry composer install --prefer-source
+install: composer install --prefer-source
 
-script: composer ci
-
-notifications:
-  email:
-    recipients:
-      - coco.experienced@gmail.com
-    on_success: change
-    on_failure: always
+script:
+  - mkdir -p build/logs
+  - vendor/bin/phpunit --coverage-text --coverage-clover build/logs/clover.xml

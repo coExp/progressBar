@@ -1,6 +1,6 @@
 <?php
 
-namespace coExp\wUnderBar\Exception;
+namespace coExp\WunderBar\Exception;
 
 class MultipleBarConfigurationException extends \Exception
 {
