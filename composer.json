@@ -1,9 +1,9 @@
 {
-    "name": "coExp/progressBar",
+    "name": "coexp/wunder-bar",
     "type": "library",
     "description": "Beautiful console progressBar",
-    "keywords": ["progressbar","output","console","multiline"],
-    "homepage": "https://github.com/coExp/progressBar",
+    "keywords": ["progressbar","output","console","multiline","wunderbar","stderror","stdout"],
+    "homepage": "https://github.com/coExp/wUnderBar",
     "license": "MIT",
     "authors": [
         {
@@ -20,12 +20,12 @@
     },
     "autoload": {
         "psr-4": {
-            "coExp\\ProgressBar\\": "src/"
+            "coExp\\wUnderBar\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "coExp\\ProgressBar\\Tests\\": "tests/"
+            "coExp\\wUnderBar\\Tests\\": "tests/"
         }
     }
 }
